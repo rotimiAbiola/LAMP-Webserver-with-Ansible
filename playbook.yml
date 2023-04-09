@@ -1,0 +1,28 @@
+---
+- name: Configure webserver with LAMP
+  hosts: webservers
+  become: true
+
+  vars_files:
+    - vars.yml
+
+  handlers:
+    - include: handlers/handlers.yml
+     
+  tasks:
+    - include: tasks/common.yml
+
+    - include: tasks/db.yml
+
+    - include: tasks/clone-repo.yml
+
+    - include: tasks/composer.yml
+    
+    - include: tasks/php.yml
+
+    - include: tasks/apache.yml
+
+    - include: tasks/ssl.yml
+
+    - include: tasks/postgre.yml
+

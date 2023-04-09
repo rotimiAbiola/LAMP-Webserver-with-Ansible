@@ -1,0 +1,20 @@
+---
+- name: install snap
+  apt: name=snapd
+
+- name: install core with snap
+  shell: snap install core
+    
+- name: refresh core with snap
+  shell: snap refresh core
+
+- name: install certbot with snap
+  shell: snap install --classic certbot
+
+- name: link certbot files
+  shell: ln -s /snap/bin/certbot /usr/bin/certbot
+
+- name: install ssl
+  shell: yes | certbot --apache --agree-tos --redirect -m email@{{ domain }} -d {{domain}}
+
+ 

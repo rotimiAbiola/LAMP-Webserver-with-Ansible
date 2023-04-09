@@ -1,0 +1,38 @@
+---
+- name: copy apache conf file to server
+  copy: 
+    src: ./templates/laravel.conf
+    dest: /etc/apache2/sites-available/
+  
+- name: create .htaccess file
+  copy:
+     dest: "/var/www/html/laravel/.htaccess"
+     content: |
+          <IfModule mod_rewrite.c>
+            RewriteEngine On
+            RewriteCond %{REQUEST_URI} !^/public/
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteRule ^(.*)$ /public/$1
+            RewriteRule ^(/)?$ public/index.php [L]
+          </IfModule>
+
+- name: Change file ownership, group and permissions
+  file:
+    path: /var/www/html/laravel
+    state: directory
+    recurse: true
+    owner: www-data
+    group: www-data
+    mode: '0755'
+             
+- name: a2dissite
+  shell: a2dissite 000-default.conf
+  
+- name: run a2ensite
+  shell: a2ensite laravel.conf
+  
+- name: run a2enmod rewrite
+  shell: a2enmod rewrite
+  notify: restart apache
+  
